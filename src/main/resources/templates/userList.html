@@ -1,10 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <title>ITSM SGGW Tool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1 shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+            integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+            integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+            crossorigin="anonymous"></script>
+    <link href="../static/css/custom_style.css" rel="stylesheet">
+    <link href="../../static/css/custom_style.css" th:href="@{/css/custom_style.css}" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 </head>
 <body>
+<div>&nbsp;</div>
+<div style="margin-top: 43px"></div>
+<div class="container" th:replace="fragments/header :: header" style="margin-bottom: 77px;"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 mb-2 d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+            <div>
+                <h4 class="d-inline">Item list</h4>&nbsp;
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-9 border-top border-right p-0">
+            <div class="table-responsive mt-2">
+                <table id="issuesTable" class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Last Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Job Title</th>
+                        <th scope="col">User's role</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="user : ${allUsers}" style="cursor: pointer" th:id="${user.userId}"
+                        th:onclick="'javascript:rowClicked(\'' + ${user.userId} + '\');'"
+                        th:onmouseover="'javascript:mouseOver(\'' + ${user.userId} + '\');'"
+                        th:onmouseout="'javascript:mouseOut(\'' + ${user.userId} + '\');'">
+                        <td th:text="${user.userId != null}? ${user.userId} : 'None'"></td>
+                        <td th:text="${user.firstName != null}? ${user.firstName} : 'None'"></td>
+                        <td th:text="${user.lastName != null}? ${user.lastName} : 'None'"></td>
+                        <td th:text="${user.email != null}? ${user.email} : 'None'"></td>
+                        <td th:text="${user.jobTitle != null}? ${user.jobTitle} : 'None'"></td>
+                        <td th:text="${user.roles[0].userType != null}? ${user.roles[0].userType} : 'None'"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <br><br>
+</div>
+<div class="container" th:replace="fragments/footer :: footer"></div>
+<script>
+    function rowClicked(value) {
+        location.href = "/profile-" + value;
+    }
 
+    function mouseOver(value) {
+        document.getElementById(value).style.color = "green";
+    }
+
+    function mouseOut(value) {
+        document.getElementById(value).style.color = "black";
+    }
+</script>
 </body>
 </html>
+
