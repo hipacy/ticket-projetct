@@ -4,13 +4,228 @@
 <head>
 
     <meta charset="utf-8">
-
+    <title>ITSM SGGW Tool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1 shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+            integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+            integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+            crossorigin="anonymous"></script>
+    <link href="../static/css/custom_style.css" rel="stylesheet">
+    <link href="../../static/css/custom_style.css" th:href="@{/css/custom_style.css}" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 </head>
 
 <body>
+<div>&nbsp;</div>
+<div style="margin-top: 43px"></div>
+
+
+<div class="container" th:replace="fragments/header :: header"></div>
+<!--<h2><span class="text-success" th:utext="${text}"></span></h2>-->
+
+<!--<div class="container" th:if="${#request.getUserPrincipal().toString().contains('ADMIN')}">-->
+<!--<h2>Jesteś zalogowany jako admin</h2>-->
+<!--</div>-->
+<!--<div class="container" th:if="${#request.getUserPrincipal().toString().contains('USER')}">-->
+<!--<h2>Jesteś zalogowany jako user albo technik.</h2>-->
+<!--</div>-->
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 mb-2 d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+            <div>
+                <h4 class="d-inline">Hello <span th:text="${user.firstName}"></span>, how can we help you?</h4>&nbsp;
+
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3 border-top border-right p-2">
+            <form id="form" autocomplete="off" action="#" th:action="@{/filter}" th:object="${filter}" method="post"
+                  role="form">
+                <div class="d-flex justify-content-between">
+                    <div class="d-inline mt-auto"></div>
+                    <div class="d-inline mt-auto">
+                        <a th:onclick="'javascript:clearForm()'"
+                           class="btn btn-secondary btn-outline-secondary btn-sm " type="button" id=""
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Reset filter
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!--<h6>Creation date:</h6>-->
+                <!--<div class="form-group">-->
+                <!--<input onfocus="(this.type='date')" name="" class="form-control p-1 " placeholder="Since">-->
+                <!--</div>-->
+
+                <!--<div class="inline mr-auto ml-auto">-->
+                <!--<h6>-</h6>-->
+                <!--</div>-->
+
+                <!--<input onfocus="(this.type='date')" name="" class="form-control p-1 " placeholder="To">-->
+
+
+                <h6>ID:</h6>
+                <div class="form-group">
+                    <input type="number" th:field="*{id}" min="1" class="form-control input-lg" placeholder="ID">
+                </div>
+                <!--<h6>Team:</h6>-->
+                <!--<div class="form-group">-->
+                <!--<input name="" th:field="*{teamName}" class="form-control p-1 " placeholder="Team">-->
+                <!--</div>-->
+                <span>OR:</span>
+
+                <h6>Category:</h6>
+                <div class="form-group">
+                    <input name="" th:field="*{category}" class="form-control p-1 " placeholder="Category">
+                </div>
+                <span>OR:</span>
+                <h6>Priority:</h6>
+                <div class="form-group">
+                    <input name="" th:field="*{priority}" class="form-control p-1 " placeholder="Priority">
+                </div>
+                <span>OR:</span>
+
+                <h6>Search text (regex):</h6>
+                <div class="form-group">
+                    <input name="" th:field="*{body}" class="form-control p-1 " placeholder="Enter text here...">
+                </div>
+                <button type="submit" class="btn btn-secondary btn-outline-secondary btn-block">Filter</button>
+                <br>
+            </form>
+
+        </div>
+
+
+        <div class="col-9 border-top border-right p-0">
+            <h4 class="d-inline" th:if="${#request.getUserPrincipal().toString().contains('USER')}">Tickets raised by
+                you:</h4>&nbsp;
+            <h4 class="d-inline" th:if="${!#request.getUserPrincipal().toString().contains('USER')}">All tickets:</h4>&nbsp;
+
+            <div class="table-responsive mt-2">
+                <table id="issuesTable" class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Title</th>
+                        <th scope="col" th:if="${!#request.getUserPrincipal().toString().contains('USER')}">Team</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Creation date</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="ticket : ${ticketPage}" style="cursor: pointer" th:id="${ticket.ticketId}"
+                        th:onclick="'javascript:rowClicked(\'' + ${ticket.ticketId} + '\');'"
+                        th:onmouseover="'javascript:mouseOver(\'' + ${ticket.ticketId} + '\');'"
+                        th:onmouseout="'javascript:mouseOut(\'' + ${ticket.ticketId} + '\');'">
+
+                        <td th:text="${ticket.ticketId != null}? ${ticket.ticketId} : 'None'"></td>
+                        <td th:text="${ticket.title != null}? ${ticket.title} : 'None'"></td>
+                        <td th:text="${#lists.size(ticket.assignedTeams) &gt; 0}? ${ticket.assignedTeams[0].teamName} : 'None'"
+                            th:if="${!#request.getUserPrincipal().toString().contains('USER')}"></td>
+                        <td th:text="${ticket.category != null}? ${ticket.category} : 'None'"></td>
+                        <td th:text="${ticket.creationDate != null}?
+                        ${#temporals.format(ticket.creationDate, 'dd-MM-yyyy HH:mm')}: 'None'"></td>
+                        <td th:text="*{ticket.stateId != null}? *{ticket.stateId.state} : 'None'">##</td>
+                    </tr>
+
+
+                    </tbody>
+                </table>
+
+                <div th:if = "${filtering == null}" class="pagination-div" style="text-align: center">
+                <span th:if="${ticketPage.hasPrevious()}">
+                        <a th:href="@{/main(page=${ticketPage.number - 1},size=${ticketPage.size})}">Previous</a>
+                    </span>
+                    <th:block th:if="${ticketPage.totalPages > 0}" class="pagination"
+                              th:each="pageNumber : ${pageNumbers}">
+                        <a th:href="@{/main(size=${ticketPage.size}, page=${pageNumber})}"
+                           th:text=${pageNumber}
+                           th:class="${pageNumber==ticketPage.number + 1} ? active"></a>
+                    </th:block>
+                    <span th:if="${ticketPage.hasNext()}">
+                        <a th:if="ticketPage.number == 1" th:href="@{/main(page=2,size=${ticketPage.size})}">Next</a>
+                        <a th:if="ticketPage.number != 1"
+                           th:href="@{/main(page=${ticketPage.number+2},size=${ticketPage.size})}">Next</a>
+
+                    </span>
+                </div>
 
 
 
+                <div th:if = "${filtering}" class="pagination-div" style="text-align: center">
+                <span th:if="${ticketPage.hasPrevious()}">
+                        <a th:href="@{/main(page=${ticketPage.number - 1},size=${ticketPage.size})}">Previous</a>
+                    </span>
+                    <th:block th:if="${ticketPage.totalPages > 0}" class="pagination"
+                              th:each="pageNumber : ${pageNumbers}">
+                        <a th:href="@{/main(size=${ticketPage.size}, page=${pageNumber},
+                        ticketId=${filter.id},
+                        category=${filter.category},
+                        prio=${filter.priority},
+                        body=${filter.body})}"
 
+                           th:text=${pageNumber}
+                           th:class="${pageNumber==ticketPage.number + 1} ? active"></a>
+                    </th:block>
+                    <span th:if="${ticketPage.hasNext()}">
+                        <a th:if="ticketPage.number == 1" th:href="@{/main(page=2,size=${ticketPage.size})}">Next</a>
+                        <a th:if="ticketPage.number != 1"
+                           th:href="@{/main(size=${ticketPage.size}, page=${ticketPage.number+2},
+                        ticketId=${filter.id},
+                        category=${filter.category},
+                        prio=${filter.priority},
+                        body=${filter.body})}"
+                        >Next</a>
+
+                    </span>
+                </div>
+
+            </div>
+            <br>
+        </div>
+    </div>
+</div>
+<script>
+    function rowClicked(value) {
+        location.href = "/ticketView-" + value;
+    }
+    function main() {
+        location.href = "/main";
+    }
+
+    function mouseOver(value) {
+        document.getElementById(value).style.color = "green";
+    }
+
+    function mouseOut(value) {
+        document.getElementById(value).style.color = "black";
+    }
+
+    function clearForm() {
+        document.getElementById('form').reset();
+        main();
+    }
+
+
+</script>
+<div class="container" th:replace="fragments/footer :: footer"></div>
 </body>
+
 </html>
