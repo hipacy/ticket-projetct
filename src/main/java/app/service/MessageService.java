@@ -2,6 +2,8 @@ package app.service;
 
 import app.model.Message;
 import app.model.Ticket;
+//import app.model.Users;
+//import app.model.mapper.MessageMapper;
 import app.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,19 +25,15 @@ public class MessageService {
         return messageRepository.findMessageByTicketId(ticket);
     }
 
-    public List<Message> findAllMessages(){
-        return messageRepository.findAll();
-    }
 
-    public void saveMessage(Message message){
+    private void saveMessage(Message message) {
         messageRepository.save(message);
     }
-//    public List<Message> findAllMessages() {
-//        return messageRepository.findAllItems();
+
+
+//    public void createNewMessage(Message message, Users user, Ticket ticket) {
+//        saveMessage(MessageMapper.mapNewMessage(message, user, ticket));
 //    }
-//
-//    public List<Message> findItemByType(String type) {
-//        return messageRepository.findItemByType(type);
-//    }
+
 
 }
