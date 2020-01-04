@@ -2,6 +2,7 @@ package app.controller;
 
 
 import app.model.Item;
+import app.model.Prio;
 import app.model.StateOfTicket;
 import app.model.UserType;
 import app.service.ItemService;
@@ -35,6 +36,13 @@ public class GlobalAttributesController {
     @ModelAttribute("allCategories")
     public Set<String> getCategories() {
         return ticketService.findAllCategories();
+    }
+
+    @ModelAttribute("allPrios")
+    public Set<Prio> getPrios() {
+        return Stream.of(new Prio(1, "Low"), new Prio(2, "Medium"),
+                new Prio(3, "High"))
+                .collect(Collectors.toSet());
     }
 
     @ModelAttribute("states")
