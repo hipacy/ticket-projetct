@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.Optional;
@@ -43,6 +44,35 @@ public class UserController {
         modelAndView.addObject(ModelNames.EDIT_MODEL_NAME, false);
 
         modelAndView.setViewName(TemplateNames.PROFILE_TEMPLATE_NAME);
+        return modelAndView;
+    }
+
+    @GetMapping(value = {"/editUser-{id}"})
+    public ModelAndView editUser(ModelAndView modelAndView, @PathVariable Integer id) {
+        modelAndView.addObject(ModelNames.USER_MODEL_NAME, userService.findUsersByUserId(id));
+        modelAndView.addObject(ModelNames.EDIT_MODEL_NAME, true);
+
+        modelAndView.setViewName(TemplateNames.PROFILE_TEMPLATE_NAME);
+        return modelAndView;
+    }
+
+    @PostMapping(value = {"/editUser-{id}"})
+    public ModelAndView editUser(ModelAndView modelAndView,
+                                 @PathVariable Integer id,
+                                 Users user,
+                                 BindingResult br, RedirectAttributes rr) {
+
+        userService.updateUser(user, id);
+
+        if (!br.hasErrors()) {
+            rr.addFlashAttribute(ModelNames.SUCCESS_MESSAGE_MODEL_NAME, "User edited successfully!");
+        } else {
+            rr.addFlashAttribute(ModelNames.ERROR_MESSAGE_MODEL_NAME, "User couldn't be edited, try again.");
+        }
+
+        rr.addFlashAttribute(ModelNames.EDIT_MODEL_NAME, false);
+
+        modelAndView.setViewName(TemplateNames.REDIRECT_PREFIX + TemplateNames.PROFILE_TEMPLATE_NAME + "-" + id);
         return modelAndView;
     }
 
