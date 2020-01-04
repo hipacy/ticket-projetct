@@ -1,9 +1,64 @@
 <!DOCTYPE html>
-<html>
-<head>
-	<title></title>
-</head>
-<body>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
+<head>
+    <title>ITSM SGGW Tool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1 shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <link href="../static/css/custom_style.css" rel="stylesheet">
+    <link href="../../static/css/custom_style.css" th:href="@{/css/custom_style.css}" rel="stylesheet" />
+</head>
+
+<body>
+    <br>
+    <div style="margin-top: 43px"></div>
+    <div class="container" th:replace="fragments/header :: header"></div>
+    <div class="center-form">
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-sm-3"> </div>
+                <div class="col-sm-6 bg-brand rounded-signin border-signin">
+
+                    <div class="container mb-4">
+                        <!--<img th:src="@{/images/logo.jpg}" class="img-responsive center-block d-inline" width="300" height="300" alt="Logo" />-->
+                        <!--<h3 class="form-signin-heading d-inline text-white" th:text="Welcome"></h3>-->
+
+                        <h1 style="color: white"><img class="rounded border border-signin ml-4 mt-3" th:src="@{/images/logo.jpg}" alt="" width="40%" style="height:auto;">
+                            Welcome </h1>
+
+
+                        <form th:action="@{/login}" method="POST" class="form-signin">
+
+                            <br />
+                            <input type="text" id="email" name="email" th:placeholder="Email" class="form-control" /> <br />
+                            <input type="password" th:placeholder="Password" id="password" name="password" class="form-control" /> <br />
+
+                            <div align="center" th:if="${param.error}">
+                                <p style="color: #FF1C19;">Email or Password invalid, please verify</p>
+                            </div>
+                            <td>
+                                <input class="d-inline" type="checkbox" name="remember-me" />
+                                <div class="text-white d-inline">Remember Me </div>
+                            </td>
+                            <button class="btn btn-lg btn-primary btn-block mt-2 " name="Submit" value="Login" type="Submit" th:text="Login"></button>
+                        </form>
+                    </div>
+                    <!--<div class="container mb-3">-->
+                        <!--<form th:action="@{/registration}" method="get">-->
+                            <!--<button class="btn btn-md btn-warning  btn-block" type="Submit">Or Go To Registration Page</button>-->
+                        <!--</form>-->
+                    <!--</div>-->
+                </div>
+                <div class="col-sm-3"> </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="container" th:replace="fragments/footer :: footer"></div>
 </body>
+
 </html>
