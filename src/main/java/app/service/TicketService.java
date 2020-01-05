@@ -1,9 +1,10 @@
 package app.service;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
 import app.model.*;
 import app.model.mapper.TicketMapper;
+import app.model.names.ModelNames;
 import app.repository.TicketRepository;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -77,10 +78,9 @@ public class TicketService {
         return ticketRepository.findAllCategories();
     }
 
-
     public boolean checkId(ModelAndView modelAndView, @PathVariable Integer id) {
         if (id == null) {
-            modelAndView.setViewName("access-denied");
+            modelAndView.setViewName(ModelNames.ACCESS_DENIED);
             return true;
         }
         return false;

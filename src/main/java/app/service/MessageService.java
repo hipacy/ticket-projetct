@@ -2,13 +2,16 @@ package app.service;
 
 import app.model.Message;
 import app.model.Ticket;
-//import app.model.Users;
-//import app.model.mapper.MessageMapper;
+import app.model.Users;
+import app.model.mapper.MessageMapper;
 import app.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+//import app.model.Users;
+//import app.model.mapper.MessageMapper;
 
 @Service("messageService")
 public class MessageService {
@@ -31,9 +34,9 @@ public class MessageService {
     }
 
 
-//    public void createNewMessage(Message message, Users user, Ticket ticket) {
-//        saveMessage(MessageMapper.mapNewMessage(message, user, ticket));
-//    }
+    public void createNewMessage(Message message, Users user, Ticket ticket) {
+        saveMessage(MessageMapper.mapNewMessage(message, user, ticket));
+    }
 
 
 }

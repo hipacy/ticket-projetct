@@ -3,23 +3,21 @@ package app.controller;
 import app.model.*;
 import app.model.names.ModelNames;
 import app.model.names.TemplateNames;
-import app.service.MessageService;
-
-import app.service.TicketService;
-import app.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import app.service.*;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -27,17 +25,25 @@ import java.util.stream.Collectors;
 public class TicketController {
 
 
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private TicketService ticketService;
-
-//
-//
-
-    @Autowired
+    private ItemService itemService;
     private MessageService messageService;
+    private TeamService teamService;
+
+
+    public TicketController(UserService userService,
+                            TicketService ticketService,
+                            ItemService itemService,
+                            MessageService messageService,
+                            TeamService teamService) {
+        this.userService = userService;
+        this.ticketService = ticketService;
+        this.itemService = itemService;
+        this.messageService = messageService;
+        this.teamService = teamService;
+    }
+
 
     @GetMapping(value = "/createTicket")
     public ModelAndView createTicket(ModelAndView modelAndView) {
@@ -51,6 +57,7 @@ public class TicketController {
 
         return modelAndView;
     }
+
 
     @PostMapping(value = "/createTicket")
     public ModelAndView createTicket(ModelAndView modelAndView,
@@ -75,6 +82,42 @@ public class TicketController {
         return modelAndView;
     }
 
+    @Secured({"ADMIN", "TECHNICIAN"})
+    @GetMapping(value = "/editTicket-{id}")
+    public ModelAndView editTicket(ModelAndView modelAndView,
+                                   @PathVariable Integer id) {
+        Users user = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        Ticket ticket = ticketService.findTicketById(id);
+
+        modelAndView.addObject(ModelNames.USER_MODEL_NAME, user);
+        modelAndView.addObject(ModelNames.TICKET_MODEL_NAME, ticket);
+        modelAndView.addObject(ModelNames.EDIT_FLAG_MODEL_NAME, true);
+
+        modelAndView.setViewName(TemplateNames.TICKET_EDITOR_TEMPLATE_NAME);
+
+        return modelAndView;
+    }
+
+    @Secured({"ADMIN", "TECHNICIAN"})
+    @PostMapping(value = "/editTicket-{id}")
+    public ModelAndView editTicket(ModelAndView modelAndView,
+                                   @PathVariable Integer id,
+                                   @Valid Ticket ticket,
+                                   BindingResult bindingResult,
+                                   RedirectAttributes rr) {
+        Users user = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        if (bindingResult.hasErrors()) {
+            rr.addFlashAttribute(ModelNames.ERROR_MESSAGE_MODEL_NAME, "Fill in all fields!!!!");
+        } else {
+            ticketService.editTicket(ticket, user, id);
+            rr.addFlashAttribute(ModelNames.SUCCESS_MESSAGE_MODEL_NAME, "Ticket has been edited!");
+        }
+        rr.addFlashAttribute(ModelNames.EDIT_FLAG_MODEL_NAME, true);
+        modelAndView.setViewName(TemplateNames.REDIRECT_PREFIX + "editTicket-" + id);
+
+        return modelAndView;
+    }
 
     @Secured({"ADMIN", "TECHNICIAN"})
     @PostMapping(value = "/ticketView-{id}")
@@ -98,10 +141,16 @@ public class TicketController {
         if (id != null) {
             Ticket currentTicket = ticketService.findTicketById(id);
 
-//
+            List<Team> ticketTeams = teamService.findAllTicketTeams(id);
+            if (!ticketTeams.isEmpty()) {
+                Team team = ticketTeams.get(ticketTeams.size() - 1);
+                modelAndView.addObject(ModelNames.TEAM_MODEL_NAME, team);
+            }
 
+            modelAndView.addObject(ModelNames.AVAILABLE_TEAMS_MODEL_NAME, teamService.findAllTeams());
             modelAndView.addObject(ModelNames.TICKET_MODEL_NAME, currentTicket);
-            modelAndView.addObject(ModelNames.MESSAGES_MODEL_NAME, messageService.findMessagesByTicketId(currentTicket));
+            modelAndView.addObject(ModelNames.MESSAGES_MODEL_NAME,
+                    messageService.findMessagesByTicketId(currentTicket));
             modelAndView.addObject(ModelNames.MESSAGE_MODEL_NAME, new Message());
             modelAndView.addObject(ModelNames.TECHNICIANS_MODEL_NAME, userService.findUserByRoles(
                     new UserType(3, "TECHNICIAN")));
@@ -116,11 +165,19 @@ public class TicketController {
 
         } else {
             modelAndView.setViewName(TemplateNames.ACCESS_DENIED_ERROR_TEMPLATE_NAME);
-            return modelAndView;
         }
 
-
         return modelAndView;
+    }
+
+    @ModelAttribute("allItems")
+    public List<Item> getItems() {
+        return itemService.findAllItems();
+    }
+
+    @ModelAttribute("allCategories")
+    public Set<String> getCategories() {
+        return ticketService.findAllCategories();
     }
 
 }

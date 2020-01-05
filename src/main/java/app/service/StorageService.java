@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 
 @Service("storageService")
 public class StorageService {
@@ -37,7 +38,7 @@ public class StorageService {
         setPath(fileDomain, identity);
 
         try {
-            if (!file.getOriginalFilename().contains(".png")) {
+            if (!Objects.requireNonNull(file.getOriginalFilename()).contains(".png")) {
                 throw new StorageException("Incorrect file format! Image has to be in .png format.");
             }
             Path uploadedFilePath = Paths.get(path);

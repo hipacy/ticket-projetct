@@ -37,7 +37,7 @@ repositories {
     version '1.0'
     def queryDslVersion = '4.1.3'
 
-    mainClassName = "MainApp"
+    mainClassName = "app.Aggregator"
     version = '1.0'
     sourceCompatibility = 1.11
     targetCompatibility = 1.11
@@ -46,7 +46,7 @@ repositories {
 //create a single Jar with all dependencies
     task fatJar(type: Jar) {
         manifest {
-            attributes 'Implementation-Title': 'itsm-tool-demo',
+            attributes 'Implementation-Title': 'ticket-project',
                     'Implementation-Version': version,
                     'Main-Class': mainClassName
         }
@@ -91,6 +91,8 @@ repositories {
         compile "com.sun.xml.bind:jaxb-impl:2.2.11"
         compile "javax.activation:activation:1.1.1"
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+        compile name: 'sqljdbc4-4.0'
+
     }
 }
 

@@ -35,15 +35,9 @@ public class UserService {
         return usersRepository.save(user);
     }
 
-    public Users updateUser(Users userData, Users currentUser) {
-        UserMapper.mapEditedUser(userData, currentUser);
-        return usersRepository.save(currentUser);
-    }
 
     public Users updateUser(Users userData, Integer currentUserId) {
-        Users currentUser = usersRepository.findUsersByUserId(currentUserId);
-        UserMapper.mapEditedUser(userData, currentUser);
-        return usersRepository.save(currentUser);
+        return updateUser(userData, usersRepository.findUsersByUserId(currentUserId));
     }
 
     public List<Users> findUserByRoles(UserType role) {
@@ -61,5 +55,8 @@ public class UserService {
         return usersRepository.findUsersByUserId(id);
     }
 
-
+    private Users updateUser(Users userData, Users currentUser) {
+        UserMapper.mapEditedUser(userData, currentUser);
+        return usersRepository.save(currentUser);
+    }
 }

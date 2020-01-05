@@ -3,4 +3,5 @@
 out/
 build/
 src/main/resources/application.properties
-application.properties
+/images
+src/main/resources/static/images/user/

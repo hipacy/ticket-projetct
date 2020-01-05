@@ -24,8 +24,7 @@ public class ModelNames {
     public static final String OTHER_ITEMS_MODEL_NAME = "otherItems";
     public static final String TEAM_MODEL_NAME = "team";
     public static final String AVAILABLE_TEAMS_MODEL_NAME = "availableTeams";
-
-
+    public static final String ACCESS_DENIED = "access-denied";
 }
 
 

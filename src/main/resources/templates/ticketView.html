@@ -26,224 +26,236 @@
 </head>
 
 <body>
-text="${ticket.title}">Tytuł ticketu</h3>
-</div>
+<div>&nbsp;</div>
+<div style="margin-top: 43px"></div>
+<div class="container" th:replace="fragments/header :: header"></div>
 
-
-<div class="row">
-    <div class="col-lg-8 col-12 border-top border-right p-2">
-        <div class="form-group">
-                <textarea th:text="${ticket.ticketBody}" class="form-control" id="ticketContent" rows="18"
-                          readonly>treść</textarea>
-        </div>
-        <h5>Messages:</h5>
-        <table id="messagesTable" class="table table-striped">
-            <thead>
-            <tr>
-                <th scope="col">User</th>
-                <th scope="col">Content</th>
-                <th scope="col">Date</th>
-                <th scope="col"></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="messageId : ${messages}">
-                <td th:if="${messageId.creator != null}" class="p-1"
-                    th:id="${messageId.creator.userId}"
-                    th:text="${messageId.creator != null}? ${messageId.creator.email} : 'None'"
-                    th:onclick="'javascript:rowClicked(\'' + ${messageId.creator.userId} + '\');'"
-                    style="cursor: pointer"></td>
-
-                <td class="p-1" style = "width: 60%" th:text="${messageId.body != null}? ${messageId.body} : 'None'"></td>
-                <td class="p-1"
-                    th:text="${messageId.dateTimeCreated != null}? ${messageId.dateTimeCreated} : 'None'"></td>
-                <!--<td class="p-1" style="width: 90px;">-->
-                <!--<div class="text-center">-->
-                <!--<a th:if="${#request.getUserPrincipal() != null && !(#request.getUserPrincipal().toString().contains('USER'))}">-->
-                <!--<button type="button" class="btn btn-primary btn-sm " style="width: 80px">Edit</button>-->
-                <!--</a>-->
-                <!--<form method="POST"-->
-                <!--th:if="${#request.getUserPrincipal() != null && !(#request.getUserPrincipal().toString().contains('USER'))}">-->
-                <!--<button type="submit" class="btn btn-danger btn-sm mt-1" style="width: 80px">-->
-                <!--Delete-->
-                <!--</button>-->
-                <!--</form>-->
-                <!--</div>-->
-                <!--</td>-->
-            </tr>
-            </tbody>
-        </table>
-        <div class="form-group text-center">
-            <div class="form-group">
-                <form class="form-inline" th:action="@{/sendMessage-{id}(id=${ticket.ticketId})}"
-                      th:object="${message}"
-                      method="post"> <textarea rows="5" cols="70" th:field="*{body}"
-                                               placeholder="Enter your message here"></textarea>
-
-                    <button type="submit" class="btn btn-primary btn-sm " style="width: 80px">Send</button>
-                </form>
-            </div>
-            <br>
-            <a th:href="@{/editTicket-{id}(id=${ticket.ticketId})}" class="btn btn-large btn-success"
-               th:if="${!#request.getUserPrincipal().toString().contains('USER')}">Edit
-                ticket</a>
-            <a th:onclick="'javascript:window.history.back();'" class="btn btn-warning ml-3">Go back</a>
-            <br><br>
-
-        </div>
+<div class="container-fluid">
+    <div class="row">
+        <h3 th:text="${ticket.title}">Tytuł ticketu</h3>
     </div>
 
 
-    <div class="col-lg-4 col-12 border-top border-right p-2">
+    <div class="row">
+        <div class="col-lg-8 col-12 border-top border-right p-2">
+            <div class="form-group">
+                <textarea th:text="${ticket.ticketBody}" class="form-control" id="ticketContent" rows="18"
+                          readonly>treść</textarea>
+            </div>
+            <h5>Messages:</h5>
+            <table class="table table-striped" id="messagesTable">
+                <thead>
+                <tr>
+                    <th scope="col">User</th>
+                    <th scope="col">Content</th>
+                    <th scope="col">Date</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="messageId : ${messages}">
+                    <td class="p-1" style="cursor: pointer"
+                        th:id="${messageId.creator.userId}"
+                        th:if="${messageId.creator != null}"
+                        th:onclick="'javascript:rowClicked(\'' + ${messageId.creator.userId} + '\');'"
+                        th:text="${messageId.creator != null}? ${messageId.creator.email} : 'None'"></td>
 
-        <label class="my-1 mr-2 font-weight-bold" for="inlineFormCustomSelectPref">Ticket status:</label>
-        <span th:text="${ticket.stateId != null}? ${ticket.stateId.state}: 'None'" class="list-group-item p-1">
+                    <td class="p-1" style="width: 60%"
+                        th:text="${messageId.body != null}? ${messageId.body} : 'None'"></td>
+                    <td class="p-1"
+                        th:text="${messageId.dateTimeCreated != null}? ${messageId.dateTimeCreated} : 'None'"></td>
+                    <!--<td class="p-1" style="width: 90px;">-->
+                    <!--<div class="text-center">-->
+                    <!--<a th:if="${#request.getUserPrincipal() != null && !(#request.getUserPrincipal().toString().contains('USER'))}">-->
+                    <!--<button type="button" class="btn btn-primary btn-sm " style="width: 80px">Edit</button>-->
+                    <!--</a>-->
+                    <!--<form method="POST"-->
+                    <!--th:if="${#request.getUserPrincipal() != null && !(#request.getUserPrincipal().toString().contains('USER'))}">-->
+                    <!--<button type="submit" class="btn btn-danger btn-sm mt-1" style="width: 80px">-->
+                    <!--Delete-->
+                    <!--</button>-->
+                    <!--</form>-->
+                    <!--</div>-->
+                    <!--</td>-->
+                </tr>
+                </tbody>
+            </table>
+            <div class="form-group text-center">
+                <div class="form-group">
+                    <form class="form-inline" method="post"
+                          th:action="@{/sendMessage-{id}(id=${ticket.ticketId})}"
+                          th:object="${message}"> <textarea cols="70" placeholder="Enter your message here" rows="5"
+                                                            th:field="*{body}"></textarea>
+
+                        <button class="btn btn-primary btn-sm " style="width: 80px" type="submit">Send</button>
+                    </form>
+                </div>
+                <br>
+                <a class="btn btn-large btn-success" th:href="@{/editTicket-{id}(id=${ticket.ticketId})}"
+                   th:if="${!#request.getUserPrincipal().toString().contains('USER')}">Edit
+                    ticket</a>
+                <a class="btn btn-warning ml-3" th:onclick="'javascript:window.history.back();'">Go back</a>
+                <br><br>
+
+            </div>
+        </div>
+
+
+        <div class="col-lg-4 col-12 border-top border-right p-2">
+
+            <label class="my-1 mr-2 font-weight-bold" for="inlineFormCustomSelectPref">Ticket status:</label>
+            <span class="list-group-item p-1" th:text="${ticket.stateId != null}? ${ticket.stateId.state}: 'None'">
 
                 </span>
-        <form class="form-inline" th:action="@{/ticketView-{id}(id=${ticket.ticketId})}" th:object="${ticket}"
-              method="post">
-            <label class="my-1 mr-2 font-weight-bold" for="inlineFormCustomSelectPref"
-                   th:if="${!#request.getUserPrincipal().toString().contains('USER')}">Change status:</label>
+            <form class="form-inline" method="post" th:action="@{/ticketView-{id}(id=${ticket.ticketId})}"
+                  th:object="${ticket}">
+                <label class="my-1 mr-2 font-weight-bold" for="inlineFormCustomSelectPref"
+                       th:if="${!#request.getUserPrincipal().toString().contains('USER')}">Change status:</label>
 
-            <select class="custom-select my-1 offset-1 mr-sm-2" id="inlineFormCustomSelectPref"
-                    th:field="*{stateId}" th:if="${!#request.getUserPrincipal().toString().contains('USER')}">
-                <option th:each="state,stateStat : ${states}" th:value="${state.stateId}" th:text="${state.state}">
-                </option>
-            </select>
-            <button type="submit" class="btn btn-secondary btn-outline-secondary offset-1 my-1"
-                    th:if="${!#request.getUserPrincipal().toString().contains('USER')}">Update status
-            </button>
-        </form>
-        <h6 class="mt-3 font-weight-bold">Priority:</h6>
-        <ul th:if="${ticket.prioId != null}" class="list-group">
-            <div th:if="${ticket.prioId.prio == 'Low'}">
+                <select class="custom-select my-1 offset-1 mr-sm-2" id="inlineFormCustomSelectPref"
+                        th:field="*{stateId}" th:if="${!#request.getUserPrincipal().toString().contains('USER')}">
+                    <option th:each="state,stateStat : ${states}" th:text="${state.state}" th:value="${state.stateId}">
+                    </option>
+                </select>
+                <button class="btn btn-secondary btn-outline-secondary offset-1 my-1"
+                        th:if="${!#request.getUserPrincipal().toString().contains('USER')}"
+                        type="submit">Update status
+                </button>
+            </form>
+            <h6 class="mt-3 font-weight-bold">Priority:</h6>
+            <ul class="list-group" th:if="${ticket.prioId != null}">
+                <div th:if="${ticket.prioId.prio == 'Low'}">
                         <span th:text="${ticket.prioId!= null}?
                         ${ticket.prioId.prio}: 'None'" class="list-group-item p-1" style="color: darkgreen"></span>
-            </div>
-            <div th:if="${ticket.prioId.prio == 'Medium'}">
+                </div>
+                <div th:if="${ticket.prioId.prio == 'Medium'}">
                         <span th:text="${ticket.prioId!= null}?
                         ${ticket.prioId.prio}: 'None'" class="list-group-item p-1" style="color: gold"></span>
-            </div>
-            <div th:if="${ticket.prioId.prio == 'High'}">
+                </div>
+                <div th:if="${ticket.prioId.prio == 'High'}">
                         <span th:text="${ticket.prioId!= null}?
                         ${ticket.prioId.prio}: 'None'" class="list-group-item p-1" style="color: #FF1C19"></span>
-            </div>
+                </div>
 
-        </ul>
+            </ul>
 
-        <form class="form-inline" th:action="@{/ticketView-{id}(id=${ticket.ticketId})}" th:object="${ticket}"
-              method="post">
-            <label class="my-1 mr-2 font-weight-bold" for="inlineFormCustomSelectPref"
-                   th:if="${!#request.getUserPrincipal().toString().contains('USER')}">Assign team:</label>
+            <form class="form-inline" method="post" th:action="@{/ticketView-{id}(id=${ticket.ticketId})}"
+                  th:object="${ticket}">
+                <label class="my-1 mr-2 font-weight-bold" for="inlineFormCustomSelectPref"
+                       th:if="${!#request.getUserPrincipal().toString().contains('USER')}">Assign team:</label>
 
-            <select class="custom-select my-1 offset-2 mr-sm-2" id="inlineFormCustomSelectPref"
-                    th:field="*{assignedTeams}" th:if="${!#request.getUserPrincipal().toString().contains('USER')}"
-                    multiple="multiple">
-                <option th:each="team,stateStat : ${teams}" th:value="${team.teamId}" th:text="${team.teamName}">
-                </option>
-            </select>
-            <button type="submit" class="btn btn-secondary btn-outline-secondary offset-1 my-1"
-                    th:if="${!#request.getUserPrincipal().toString().contains('USER')}">Change team
-            </button>
-        </form>
-
-
-        <form class="form-inline" th:action="@{/ticketView-{id}(id=${ticket.ticketId})}" th:object="${ticket}"
-              method="post">
-            <label class="my-1 mr-2 font-weight-bold" for="inlineFormCustomSelectPref"
-                   th:if="${!#request.getUserPrincipal().toString().contains('USER')}">Choose technician:</label>
-
-            <select class="custom-select offset-1 my-1 mr-sm-2" id="inlineFormCustomSelectPref"
-                    th:field="*{assignedTechnicianId}"
-                    th:if="${!#request.getUserPrincipal().toString().contains('USER')}">
-                <option th:each="technician,stateStat : ${technicians}" th:value="${technician.userId}"
-                        th:text="${technician.firstName + ' ' + technician.lastName}">
-                </option>
-            </select>
-            <button type="submit" class="btn btn-secondary btn-outline-secondary offset-1 my-1"
-                    th:if="${!#request.getUserPrincipal().toString().contains('USER')}">Assign technician
-            </button>
-        </form>
+                <select class="custom-select my-1 offset-2 mr-sm-2" id="inlineFormCustomSelectPref"
+                        multiple="multiple" th:field="*{assignedTeams}"
+                        th:if="${!#request.getUserPrincipal().toString().contains('USER')}">
+                    <option th:each="team,stateStat : ${availableTeams}" th:text="${team.teamName}"
+                            th:value="${team.teamId}">
+                    </option>
+                </select>
+                <button class="btn btn-secondary btn-outline-secondary offset-1 my-1"
+                        th:if="${!#request.getUserPrincipal().toString().contains('USER')}"
+                        type="submit">Change team
+                </button>
+            </form>
 
 
-        <h6 class="mt-3 font-weight-bold">Creation Date:</h6>
-        <ul class="list-group">
+            <form class="form-inline" method="post" th:action="@{/ticketView-{id}(id=${ticket.ticketId})}"
+                  th:object="${ticket}">
+                <label class="my-1 mr-2 font-weight-bold" for="inlineFormCustomSelectPref"
+                       th:if="${!#request.getUserPrincipal().toString().contains('USER')}">Choose technician:</label>
+
+                <select class="custom-select offset-1 my-1 mr-sm-2" id="inlineFormCustomSelectPref"
+                        th:field="*{assignedTechnicianId}"
+                        th:if="${!#request.getUserPrincipal().toString().contains('USER')}">
+                    <option th:each="technician,stateStat : ${technicians}"
+                            th:text="${technician.firstName + ' ' + technician.lastName}"
+                            th:value="${technician.userId}">
+                    </option>
+                </select>
+                <button class="btn btn-secondary btn-outline-secondary offset-1 my-1"
+                        th:if="${!#request.getUserPrincipal().toString().contains('USER')}"
+                        type="submit">Assign technician
+                </button>
+            </form>
+
+
+            <h6 class="mt-3 font-weight-bold">Creation Date:</h6>
+            <ul class="list-group">
                     <span th:text="${ticket.creationDate != null}?
                         ${#temporals.format(ticket.creationDate, 'dd-MM-yyyy HH:mm')}: 'None'"
                           class="list-group-item p-1">1</span>
 
-        </ul>
+            </ul>
 
-        <h6 class="mt-3 font-weight-bold">Requestor:</h6>
-        <ul class="list-group">
+            <h6 class="mt-3 font-weight-bold">Requestor:</h6>
+            <ul class="list-group">
                     <span th:text="${ticket.requestorId != null}?
                         ${ticket.requestorId.email}: 'None'"
                           class="list-group-item p-1">1</span>
 
-        </ul>
+            </ul>
 
-        <h6 class="mt-3 font-weight-bold">Last modified: </h6>
-        <ul class="list-group">
+            <h6 class="mt-3 font-weight-bold">Last modified: </h6>
+            <ul class="list-group">
                     <span th:text="${ticket.lastModifiedDate != null}?
                         ${#temporals.format(ticket.lastModifiedDate, 'dd-MM-yyyy HH:mm')}: 'None'"
                           class="list-group-item p-1"></span>
-        </ul>
+            </ul>
 
-        <h6 class="mt-3 font-weight-bold">Category:</h6>
-        <ul class="list-group">
+            <h6 class="mt-3 font-weight-bold">Category:</h6>
+            <ul class="list-group">
                     <span th:text="${ticket.category != null}?
                         ${ticket.category}: 'None'" class="list-group-item p-1"></span>
-        </ul>
-        <h6 class="mt-3 font-weight-bold">Software:</h6>
-        <th:block th:if="${#lists.size(softwareItems) &gt; 0}">
-            <ul class="list-group">
-                <th:block th:each="i: ${#numbers.sequence(0, #lists.size(softwareItems)-1)}">
-                    <li th:text="${softwareItems[i].name}" class="list-group-item p-1">
-                        Onions
-                    </li>
-                </th:block>
             </ul>
-        </th:block>
+            <h6 class="mt-3 font-weight-bold">Software:</h6>
+            <th:block th:if="${#lists.size(softwareItems) &gt; 0}">
+                <ul class="list-group">
+                    <th:block th:each="i: ${#numbers.sequence(0, #lists.size(softwareItems)-1)}">
+                        <li class="list-group-item p-1" th:text="${softwareItems[i].name}">
+                            Onions
+                        </li>
+                    </th:block>
+                </ul>
+            </th:block>
 
-        <h6 class="mt-3 font-weight-bold">Hardware:</h6>
-        <th:block th:if="${#lists.size(hardwareItems) &gt; 0}">
-            <ul class="list-group">
-                <th:block th:each="i: ${#numbers.sequence(0, #lists.size(hardwareItems)-1)}">
-                    <li th:text="${hardwareItems[i].name}" class="list-group-item p-1">
-                        Onions
-                    </li>
-                </th:block>
-            </ul>
-        </th:block>
+            <h6 class="mt-3 font-weight-bold">Hardware:</h6>
+            <th:block th:if="${#lists.size(hardwareItems) &gt; 0}">
+                <ul class="list-group">
+                    <th:block th:each="i: ${#numbers.sequence(0, #lists.size(hardwareItems)-1)}">
+                        <li class="list-group-item p-1" th:text="${hardwareItems[i].name}">
+                            Onions
+                        </li>
+                    </th:block>
+                </ul>
+            </th:block>
 
-        <h6 class="mt-3 font-weight-bold">Other:</h6>
-        <th:block th:if="${#lists.size(otherItems) &gt; 0}">
-            <ul class="list-group">
-                <th:block th:each="i: ${#numbers.sequence(0, #lists.size(otherItems)-1)}">
-                    <li th:text="${otherItems[i].name}" class="list-group-item p-1">
-                        Onions
-                    </li>
-                </th:block>
-            </ul>
-        </th:block>
+            <h6 class="mt-3 font-weight-bold">Other:</h6>
+            <th:block th:if="${#lists.size(otherItems) &gt; 0}">
+                <ul class="list-group">
+                    <th:block th:each="i: ${#numbers.sequence(0, #lists.size(otherItems)-1)}">
+                        <li class="list-group-item p-1" th:text="${otherItems[i].name}">
+                            Onions
+                        </li>
+                    </th:block>
+                </ul>
+            </th:block>
 
 
-        <h6 class="mt-3 font-weight-bold">Assigned team:</h6>
-        <div class="form-group">
-            <span th:text="${team != null}? ${team.teamName}: 'None'" class="list-group-item p-1"></span>
+            <h6 class="mt-3 font-weight-bold">Assigned team:</h6>
+            <div class="form-group">
+                <span class="list-group-item p-1" th:text="${team != null}? ${team.teamName}: 'None'"></span>
 
-        </div>
-        <h6 class="mt-3 font-weight-bold">Assigned technic:</h6>
-        <div class="form-group">
+            </div>
+            <h6 class="mt-3 font-weight-bold">Assigned technic:</h6>
+            <div class="form-group">
                     <span th:text="${ticket.assignedTechnicianId != null} ? ${ticket.assignedTechnicianId.email}:
                     'None'" class="list-group-item p-1"></span>
+            </div>
+            <h1><span class="text-success" th:utext="${successMessage}"></span></h1>
+            <br><br><br>
         </div>
-        <h1><span class="text-success" th:utext="${successMessage}"></span></h1>
-        <br><br><br>
+
+
     </div>
-
-
-</div>
 </div>
 <script>
     function rowClicked(value) {
@@ -261,5 +273,4 @@ text="${ticket.title}">Tytuł ticketu</h3>
 <div class="container" th:replace="fragments/footer :: footer"></div>
 </body>
 
-</body>
 </html>
