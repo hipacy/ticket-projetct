@@ -4,7 +4,7 @@ import app.model.*;
 import app.model.names.ModelNames;
 import app.model.names.TemplateNames;
 import app.service.MessageService;
-
+import app.service.TeamService;
 import app.service.TicketService;
 import app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
 import javax.validation.Valid;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -33,8 +33,8 @@ public class TicketController {
     @Autowired
     private TicketService ticketService;
 
-//
-//
+    @Autowired
+    private TeamService teamService;
 
     @Autowired
     private MessageService messageService;
@@ -75,6 +75,42 @@ public class TicketController {
         return modelAndView;
     }
 
+    @Secured({"ADMIN", "TECHNICIAN"})
+    @GetMapping(value = "/editTicket-{id}")
+    public ModelAndView editTicket(ModelAndView modelAndView,
+                                   @PathVariable Integer id) {
+        Users user = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        Ticket ticket = ticketService.findTicketById(id);
+
+        modelAndView.addObject(ModelNames.USER_MODEL_NAME, user);
+        modelAndView.addObject(ModelNames.TICKET_MODEL_NAME, ticket);
+        modelAndView.addObject(ModelNames.EDIT_FLAG_MODEL_NAME, true);
+
+        modelAndView.setViewName(TemplateNames.TICKET_EDITOR_TEMPLATE_NAME);
+
+        return modelAndView;
+    }
+
+    @Secured({"ADMIN", "TECHNICIAN"})
+    @PostMapping(value = "/editTicket-{id}")
+    public ModelAndView editTicket(ModelAndView modelAndView,
+                                   @PathVariable Integer id,
+                                   @Valid Ticket ticket,
+                                   BindingResult bindingResult,
+                                   RedirectAttributes rr) {
+        Users user = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        if (bindingResult.hasErrors()) {
+            rr.addFlashAttribute(ModelNames.ERROR_MESSAGE_MODEL_NAME, "Fill in all fields!!!!");
+        } else {
+            ticketService.editTicket(ticket, user, id);
+            rr.addFlashAttribute(ModelNames.SUCCESS_MESSAGE_MODEL_NAME, "Ticket has been edited!");
+        }
+        rr.addFlashAttribute(ModelNames.EDIT_FLAG_MODEL_NAME, true);
+        modelAndView.setViewName(TemplateNames.REDIRECT_PREFIX + "editTicket-" + id);
+
+        return modelAndView;
+    }
 
     @Secured({"ADMIN", "TECHNICIAN"})
     @PostMapping(value = "/ticketView-{id}")
@@ -98,7 +134,11 @@ public class TicketController {
         if (id != null) {
             Ticket currentTicket = ticketService.findTicketById(id);
 
-//
+            List<Team> ticketTeams = teamService.findAllTicketTeams(id);
+            if (!ticketTeams.isEmpty()) {
+                Team team = ticketTeams.get(ticketTeams.size() - 1);
+                modelAndView.addObject(ModelNames.TEAM_MODEL_NAME, team);
+            }
 
             modelAndView.addObject(ModelNames.TICKET_MODEL_NAME, currentTicket);
             modelAndView.addObject(ModelNames.MESSAGES_MODEL_NAME, messageService.findMessagesByTicketId(currentTicket));
